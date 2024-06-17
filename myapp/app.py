@@ -1,29 +1,22 @@
-from flask import Flask, request, jsonify, render_template, send_from_directory, url_for
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import speech_recognition as sr
 from googletrans import Translator
+from io import BytesIO
 import os
 from werkzeug.utils import secure_filename
-from datetime import datetime 
-from pydub import AudioSegment
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads'
-PROCESSED_AUDIO_FOLDER = 'processed_audios'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['PROCESSED_AUDIO_FOLDER'] = PROCESSED_AUDIO_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///uploads.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
 translator = Translator()
 
 # Create uploads folder if it doesn't exist
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
-if not os.path.exists(app.config['PROCESSED_AUDIO_FOLDER']):
-    os.makedirs(app.config['PROCESSED_AUDIO_FOLDER'])
-
 
 # Database model definition
 class Upload(db.Model):
@@ -111,7 +104,6 @@ def transcribe_audio():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
@@ -139,33 +131,6 @@ def clear_uploads():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
-    
-@app.route('/save_audio', methods=['POST'])
-def save_audio():
-    if 'audio' not in request.files:
-        return jsonify({"success": False, "message": "No file part"}), 400
-
-    file = request.files['audio']
-    if file.filename == '':
-        return jsonify({"success": False, "message": "No selected file"}), 400
-
-    original_filename = secure_filename(file.filename)
-    original_path = os.path.join(app.config['UPLOAD_FOLDER'], original_filename)
-    file.save(original_path)
-
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_filename = f"{timestamp}_normalized.wav"
-    converted_path = os.path.join(app.config['PROCESSED_AUDIO_FOLDER'], output_filename)
-
-    # Process the file
-    sound = AudioSegment.from_file(original_path)
-    sound = sound.set_frame_rate(44100).set_channels(2)
-    sound.export(converted_path, format="wav", parameters=["-acodec", "pcm_s16le"])
-
-    os.remove(original_path)  # Optionally delete the original file
-
-    return jsonify({"success": True, "message": "保存成功"}), 200
-
 
 if __name__ == '__main__':
     app.run(debug=True)
