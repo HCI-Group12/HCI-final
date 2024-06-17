@@ -37,7 +37,6 @@
         <ul id="upload-history">
             <!-- This will be dynamically loaded by JavaScript -->
         </ul>
-
         
     </div>
 
@@ -80,6 +79,10 @@
                 data.forEach(upload => {
                     const li = document.createElement('li');
                     li.innerHTML = `<strong>文件名:</strong> ${upload.original_filename}<br>
+                                   <audio controls>
+                                       <source src="/uploads/${upload.original_filename}" type="audio/mpeg">
+                                       Your browser does not support the audio element.
+                                   </audio><br>
                                    <strong>原文:</strong> ${upload.transcription}<br>
                                    <strong>翻译结果:</strong> ${upload.translation}<br>
                                    <strong>源语言:</strong> ${getLanguageDisplayName(upload.source_language)}`;

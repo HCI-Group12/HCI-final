@@ -4,12 +4,19 @@ import speech_recognition as sr
 from googletrans import Translator
 from io import BytesIO
 import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///uploads.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
 translator = Translator()
+
+# Create uploads folder if it doesn't exist
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 # Database model definition
 class Upload(db.Model):
@@ -40,35 +47,28 @@ def luyin_page():
 
 @app.route('/transcribe', methods=['POST'])
 def transcribe_audio():
-    if 'audio' not in request.files and 'audio' not in request.form:
+    if 'audio' not in request.files:
         return jsonify({"error": "No audio file provided"}), 400
 
-    if 'audio' in request.files:
-        audio_file = request.files['audio']
-        source_language = request.form['source_language']
+    audio_file = request.files['audio']
+    source_language = request.form['source_language']
+    filename = secure_filename(audio_file.filename)
+    audio_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    audio_file.save(audio_path)
 
-        recognizer = sr.Recognizer()
-        audio_data = None
+    recognizer = sr.Recognizer()
+    audio_data = None
 
-        try:
-            with sr.AudioFile(BytesIO(audio_file.read())) as source:
-                audio_data = recognizer.record(source)
-        except Exception as e:
-            return jsonify({"error": str(e)}), 500
-
-    elif 'audio' in request.form:
-        audio_data = request.files['audio'].read()
-        source_language = request.form['source_language']
-
-        recognizer = sr.Recognizer()
-        audio_data = sr.AudioData(audio_data)
-
-    else:
-        return jsonify({"error": "No audio file provided"}), 400
+    try:
+        with sr.AudioFile(audio_path) as source:
+            audio_data = recognizer.record(source)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
     try:
         transcription = recognizer.recognize_google(audio_data, language=source_language)
         
+        target_language = ''
         if source_language == 'zh-CN':
             target_language = 'en'
         elif source_language == 'en':
@@ -86,10 +86,12 @@ def transcribe_audio():
         
         translated = translator.translate(transcription, dest=target_language)
 
-        new_upload = Upload(original_filename=audio_file.filename,
-                            transcription=transcription,
-                            translation=translated.text,
-                            source_language=source_language)
+        new_upload = Upload(
+            original_filename=filename,
+            transcription=transcription,
+            translation=translated.text,
+            source_language=source_language
+        )
         db.session.add(new_upload)
         db.session.commit()
 
@@ -101,6 +103,10 @@ def transcribe_audio():
         return jsonify({"error": f"Could not request results from Speech Recognition service; {e}"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/get_uploads')
 def get_uploads():
