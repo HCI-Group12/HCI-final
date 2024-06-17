@@ -1,78 +1,220 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    margin: 0;
-    padding: 0;
+    background-image: url('./img/bk.png'); /* 确保使用正确的图片路径 */
+    background-position: center center; /* 图片始终居中 */
+    background-size: 100% auto; /* 调整这里使得图片的宽度始终为100%，高度自动调整 */
+    background-repeat: no-repeat; /* 不重复背景图片 */
+    background-attachment: fixed; /* 背景图片固定，不随内容滚动 */
+    display: flex;
+    justify-content: center; /* 水平居中内容 */
+    align-items: center; /* 垂直居中内容 */
+    min-height: 100vh; /* 最小高度为视口高度，确保至少铺满整个视口 */
 }
 
+
+
 .container {
-    max-width: 800px;
-    margin: 50px auto;
-    padding: 20px;
     background-color: #ffffff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
+    padding: 20px;
+    margin: auto;
+    width: 50%;
+    margin-top: 30px;  /* 添加上边距 */
+    margin-bottom: 30px; /* 添加下边距 */
 }
 
 h1, h2 {
-    color: #333333;
-    text-align: center;
+    color: #0056b3;
+    margin-top: 0;
+    margin-bottom: 20px; /* 调整标题的下间距 */
+}
+hr {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(to right, #f8f9fa, #ccc, #f8f9fa); /* 添加渐变效果 */
+    margin: 20px 0;
+}
+form {
+    background-color: #e6f7ff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 10px #b3daff;
+    margin-bottom: 30px; /* 增大表单与其他元素之间的间距 */
 }
 
-label {
-    font-size: 16px;
-    color: #333333;
-}
-
-select, input[type="file"], button {
-    display: block;
-    width: 100%;
+input[type="file"] {
+    border: 2px dashed #0056b3;
     padding: 10px;
-    margin-top: 10px;
-    font-size: 16px;
-    border: 1px solid #dddddd;
-    border-radius: 4px;
+    width: 95%;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    display: block;
+    margin: 20px auto; /* 自动居中 */
+    background-color: #e6f7ff; /* 添加背景色 */
 }
 
-select:focus, input[type="file"]:focus, button:focus {
-    outline: none;
-    border-color: #007BFF;
+input[type="file"]:hover {
+    border-color: #004494; /* 鼠标悬停时的边框颜色 */
+    background-color: #ccefff; /* 鼠标悬停时的背景颜色 */
+}
+
+select {
+    width: 100%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 15px; /* 增大下拉菜单的下边距 */
 }
 
 button {
-    background-color: #007BFF;
-    color: #ffffff;
-    cursor: pointer;
-}
-
-button:hover {
     background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-transform: uppercase;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px; /* 给按钮添加上边距 */
+    margin-bottom: 20px; /* 给按钮添加下边距 */
+}
+button:hover {
+    background-color: #017afb;
 }
 
-p {
-    font-size: 16px;
-    color: #555555;
+.button-group button {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-right: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.button-container {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
+.button-group button:hover {
+    background-color: #004494;
 }
 
-.button-container button {
-    width: 45%;
+.status-box, .result-box {
+    padding: 10px;
+    background-color: #e6f7ff; /* 浅蓝色背景 */
+    border-left: 5px solid #0056b3; /* 左侧边框 */
+    border-radius: 5px;
+    margin: 10px 0;
 }
 
-#upload-history {
+.audio-player {
+    width: 100%; /* 使音频播放器宽度与容器一致 */
+    margin: 10px 0;
+}
+
+ul {
     list-style-type: none;
     padding: 0;
 }
 
-#upload-history li {
-    background-color: #f9f9f9;
-    border: 1px solid #dddddd;
-    border-radius: 4px;
-    margin-bottom: 10px;
+ul li {
     padding: 10px;
+    margin-bottom: 10px; /* 调整列表项的下边距 */
+    background-color: #e6f7ff;
+    border-radius: 5px;
+    border-left: 5px solid #0056b3;
+}
+
+#transcription-result, #translation-result {
+    padding: 10px;
+    background-color: #b3daff;
+    border-radius: 5px;
+    margin-bottom: 20px; /* 增大结果显示区的下边距 */
+}
+
+.form-container {
+    background-color: #e9ecef;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+input[type="file"], select {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+}
+
+.results-container, .history-container {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+.button-group {
+    text-align: left;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.status-container {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.home-button-container {
+    text-align: center;
+}
+
+
+
+.button-container {
+    text-align: center;
+    margin: 30px;  /* 增加边距，使按钮间隔更大 */
+}
+
+.button-container button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 16px 32px;  /* 增大内边距 */
+    font-size: 18px;  /* 增大字体大小 */
+    border-radius: 8px;  /* 轻微增大边角弧度 */
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 220px;  /* 设置更宽的固定宽度 */
+    height: 60px;  /* 设置更高的固定高度 */
+}
+
+.button-container button i {
+    margin-right: 10px;  /* 调整图标和文字之间的间隔 */
+}
+
+.button-container button:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);  /* 更显著的悬浮效果 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.button-container button:active {
+    transform: translateY(1px);  /* 更轻微的按下效果 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }

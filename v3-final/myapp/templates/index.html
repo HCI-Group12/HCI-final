@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <title>语音识别翻译平台</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <h1>语音识别翻译平台</h1>
+
         <div class="button-container">
-            <button onclick="location.href='/upload'">上传文件</button>
-            <button onclick="location.href='/luyin'">实时录音</button>
+            <button onclick="location.href='/luyin'"><i class="fas fa-microphone"></i> 实时录音</button>
+            <button onclick="location.href='/upload'"><i class="fas fa-upload"></i> 上传文件</button>
         </div>
     </div>
 </body>
